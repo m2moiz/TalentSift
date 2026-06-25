@@ -1,5 +1,5 @@
-import { forwardRef, type HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import { forwardRef, type HTMLAttributes } from "react";
 
 import { cn } from "../../lib/cn";
 
@@ -96,15 +96,15 @@ CardFooter.displayName = "CardFooter";
 export {
 	Card,
 	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
 	type CardContentProps,
+	CardDescription,
 	type CardDescriptionProps,
+	CardFooter,
 	type CardFooterProps,
+	CardHeader,
 	type CardHeaderProps,
 	type CardProps,
+	CardTitle,
 	type CardTitleProps,
 	cardVariants,
 };

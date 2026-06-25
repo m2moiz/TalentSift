@@ -1,35 +1,32 @@
-import { forwardRef, type HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import { forwardRef, type HTMLAttributes } from "react";
 
 import { cn } from "../../lib/cn";
 
-const alertVariants = cva(
-	"relative w-full rounded-[8px] border p-4 text-sm",
-	{
-		variants: {
-			variant: {
-				default: [
-					"border-[var(--border-default)] bg-[var(--surface-secondary)] text-[var(--text-primary)]",
-				],
-				success: [
-					"border-[var(--status-success)]/20 bg-[var(--status-success)]/5 text-[var(--status-success)]",
-				],
-				warning: [
-					"border-[var(--status-warning)]/20 bg-[var(--status-warning)]/5 text-[var(--status-warning)]",
-				],
-				error: [
-					"border-[var(--status-error)]/20 bg-[var(--status-error)]/5 text-[var(--status-error)]",
-				],
-				info: [
-					"border-[var(--status-info)]/20 bg-[var(--status-info)]/5 text-[var(--status-info)]",
-				],
-			},
-		},
-		defaultVariants: {
-			variant: "default",
+const alertVariants = cva("relative w-full rounded-[8px] border p-4 text-sm", {
+	variants: {
+		variant: {
+			default: [
+				"border-[var(--border-default)] bg-[var(--surface-secondary)] text-[var(--text-primary)]",
+			],
+			success: [
+				"border-[var(--status-success)]/20 bg-[var(--status-success)]/5 text-[var(--status-success)]",
+			],
+			warning: [
+				"border-[var(--status-warning)]/20 bg-[var(--status-warning)]/5 text-[var(--status-warning)]",
+			],
+			error: [
+				"border-[var(--status-error)]/20 bg-[var(--status-error)]/5 text-[var(--status-error)]",
+			],
+			info: [
+				"border-[var(--status-info)]/20 bg-[var(--status-info)]/5 text-[var(--status-info)]",
+			],
 		},
 	},
-);
+	defaultVariants: {
+		variant: "default",
+	},
+});
 
 interface AlertProps
 	extends HTMLAttributes<HTMLDivElement>,
@@ -60,8 +57,7 @@ const AlertTitle = forwardRef<HTMLHeadingElement, AlertTitleProps>(
 );
 AlertTitle.displayName = "AlertTitle";
 
-interface AlertDescriptionProps
-	extends HTMLAttributes<HTMLParagraphElement> {}
+interface AlertDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {}
 
 const AlertDescription = forwardRef<
 	HTMLParagraphElement,
@@ -78,9 +74,9 @@ AlertDescription.displayName = "AlertDescription";
 export {
 	Alert,
 	AlertDescription,
-	AlertTitle,
 	type AlertDescriptionProps,
 	type AlertProps,
+	AlertTitle,
 	type AlertTitleProps,
 	alertVariants,
 };

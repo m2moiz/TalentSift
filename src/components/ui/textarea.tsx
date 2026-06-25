@@ -1,9 +1,8 @@
-import { forwardRef, useId, type TextareaHTMLAttributes } from "react";
+import { forwardRef, type TextareaHTMLAttributes, useId } from "react";
 
 import { cn } from "../../lib/cn";
 
-interface TextareaProps
-	extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 	/** Visible label text associated with the textarea. */
 	label?: string;
 	/** Error message shown below the textarea. When set, the textarea

@@ -1,16 +1,21 @@
-export { Alert, AlertDescription, AlertTitle, alertVariants } from "./alert";
 export type {
 	AlertDescriptionProps,
 	AlertProps,
 	AlertTitleProps,
 } from "./alert";
-
-export { Badge, badgeVariants } from "./badge";
+export { Alert, AlertDescription, AlertTitle, alertVariants } from "./alert";
 export type { BadgeProps } from "./badge";
-
-export { Button, buttonVariants } from "./button";
+export { Badge, badgeVariants } from "./badge";
 export type { ButtonProps } from "./button";
-
+export { Button, buttonVariants } from "./button";
+export type {
+	CardContentProps,
+	CardDescriptionProps,
+	CardFooterProps,
+	CardHeaderProps,
+	CardProps,
+	CardTitleProps,
+} from "./card";
 export {
 	Card,
 	CardContent,
@@ -20,17 +25,7 @@ export {
 	CardTitle,
 	cardVariants,
 } from "./card";
-export type {
-	CardContentProps,
-	CardDescriptionProps,
-	CardFooterProps,
-	CardHeaderProps,
-	CardProps,
-	CardTitleProps,
-} from "./card";
-
-export { Skeleton } from "./skeleton";
 export type { SkeletonProps } from "./skeleton";
-
-export { Textarea } from "./textarea";
+export { Skeleton } from "./skeleton";
 export type { TextareaProps } from "./textarea";
+export { Textarea } from "./textarea";
