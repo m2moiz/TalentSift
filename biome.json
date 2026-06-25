@@ -1,0 +1,14 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
+	"files": {
+		"includes": [
+			"package.json",
+			"index.html",
+			"vite.config.ts",
+			"tsconfig.json",
+			"tsconfig.app.json",
+			"tsconfig.node.json",
+			"src/**"
+		]
+	}
+}
