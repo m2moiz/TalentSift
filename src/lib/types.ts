@@ -122,8 +122,7 @@ export const ApiErrorKind = {
 	NetworkError: "NetworkError",
 } as const;
 
-export type ApiErrorKind =
-	(typeof ApiErrorKind)[keyof typeof ApiErrorKind];
+export type ApiErrorKind = (typeof ApiErrorKind)[keyof typeof ApiErrorKind];
 
 // ── Mock Mode ────────────────────────────────────────────────────────────────
 

@@ -1,3 +1,5 @@
+import type { CvEntry, NeedFormInput } from "../lib/types";
+
 // ── Demo Seed Data ────────────────────────────────────────────────────────────
 //
 // Realistic Kafka-scenario seed strings for JD and 3 CVs used in the 2-minute
@@ -163,7 +165,7 @@ export const DEMO_CV_DATA_ARCHITECT: string = [
 /**
  * Convenience array of all 3 CV strings in demo order.
  */
-export const DEMO_CVS: readonly string[] = [
+export const DEMO_CVS: readonly [string, string, string] = [
 	DEMO_CV_KAFKA_SPECIALIST,
 	DEMO_CV_PO,
 	DEMO_CV_DATA_ARCHITECT,
@@ -172,8 +174,27 @@ export const DEMO_CVS: readonly string[] = [
 /**
  * Candidate display labels matching the order in DEMO_CVS.
  */
-export const DEMO_CANDIDATE_NAMES: readonly string[] = [
+export const DEMO_CANDIDATE_NAMES: readonly [string, string, string] = [
 	"Aïssa B.",
 	"Clément D.",
 	"Salima E.",
 ] as const;
+
+export const DEMO_NEED_FORM: NeedFormInput = {
+	client: "Banque Française — Modernisation Core Banking",
+	operationalManager: "Sophie Martin",
+	jobTitle: "Développeur Senior Java / Kafka",
+	jobDescription: DEMO_JD,
+	contextQualification:
+		"Mission longue en environnement bancaire critique, forte exigence sur la qualité de code, la résilience des flux et la capacité à collaborer avec les équipes infra et data.",
+	tjm: "550–650 €",
+	location: "Paris 9e, hybride 2–3j/semaine",
+	startDate: "Septembre 2026",
+	remoteMode: "Hybride",
+};
+
+export const DEMO_CV_ENTRIES: readonly [CvEntry, CvEntry, CvEntry] = [
+	{ name: DEMO_CANDIDATE_NAMES[0], cvText: DEMO_CVS[0] },
+	{ name: DEMO_CANDIDATE_NAMES[1], cvText: DEMO_CVS[1] },
+	{ name: DEMO_CANDIDATE_NAMES[2], cvText: DEMO_CVS[2] },
+];
