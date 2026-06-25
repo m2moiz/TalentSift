@@ -1,5 +1,5 @@
 import { type ReactElement, useCallback } from "react";
-import type { ApiError, CvEntry, CvMatchOutput } from "../../lib/types";
+import type { ApiError, CvEntry, CvMatchOutput, Locale } from "../../lib/types";
 import { ApiErrorKind } from "../../lib/types";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
@@ -16,6 +16,7 @@ export interface CVInputsProps {
 	readonly error: ApiError | null;
 	readonly onRunMatching: () => void;
 	readonly onClearResults: () => void;
+	readonly locale: Locale;
 	/** True when a need analysis has been completed (enable matching) */
 	readonly hasAnalysis: boolean;
 }
@@ -40,6 +41,7 @@ export function CVInputs({
 	error,
 	onRunMatching,
 	onClearResults,
+	locale,
 	hasAnalysis,
 }: CVInputsProps): ReactElement {
 	const handleCvTextChange = useCallback(
@@ -69,12 +71,12 @@ export function CVInputs({
 			{/* Header */}
 			<div>
 				<h2 className="text-lg font-semibold tracking-[-0.02em]">
-					Matching CV
+					{locale === "en" ? "CV Matching" : "Matching CV"}
 				</h2>
 				<p className="mt-1 max-w-prose text-sm leading-6 text-[var(--text-secondary)]">
-					Collez les CV de votre shortlist (3 maximum) pour évaluer l'adéquation
-					avec le besoin analysé, obtenir un score, des forces, des points de
-					vigilance et des questions d'entretien.
+					{locale === "en"
+						? "Paste up to three CVs from your shortlist to evaluate fit, produce a score, strengths, watch points, and screening questions."
+						: "Collez les CV de votre shortlist (3 maximum) pour évaluer l'adéquation avec le besoin analysé, obtenir un score, des forces, des points de vigilance et des questions d'entretien."}
 				</p>
 			</div>
 
@@ -87,7 +89,11 @@ export function CVInputs({
 							<div className="flex items-center gap-2">
 								<input
 									type="text"
-									placeholder={CV_NAME_PLACEHOLDER}
+									placeholder={
+										locale === "en"
+											? "Candidate name (optional)"
+											: CV_NAME_PLACEHOLDER
+									}
 									value={entry?.name ?? ""}
 									onChange={(e) => {
 										handleNameChange(index, e.target.value);
@@ -113,18 +119,26 @@ export function CVInputs({
 			{/* Actions */}
 			<div className="flex items-center gap-3">
 				<Button onClick={onRunMatching} disabled={isLoading || !hasCvContent}>
-					{isLoading ? "Analyse en cours..." : "Run Matching"}
+					{isLoading
+						? locale === "en"
+							? "Analyzing..."
+							: "Analyse en cours..."
+						: locale === "en"
+							? "Run matching"
+							: "Lancer le matching"}
 				</Button>
 
 				{!hasAnalysis && (
 					<p className="text-xs text-[var(--status-warning)]">
-						Analysez d'abord le besoin dans l'onglet Analyse du besoin
+						{locale === "en"
+							? "Analyze the hiring need first in the Need Analysis tab"
+							: "Analysez d'abord le besoin dans l'onglet Analyse du besoin"}
 					</p>
 				)}
 
 				{result !== null && !isLoading && (
 					<Button variant="ghost" size="sm" onClick={onClearResults}>
-						Effacer les résultats
+						{locale === "en" ? "Clear results" : "Effacer les résultats"}
 					</Button>
 				)}
 			</div>
@@ -134,12 +148,20 @@ export function CVInputs({
 				<Alert variant="error">
 					<AlertTitle>
 						{error.kind === ApiErrorKind.MissingKey
-							? "Configuration requise"
+							? locale === "en"
+								? "Configuration required"
+								: "Configuration requise"
 							: error.kind === ApiErrorKind.Timeout
-								? "Délai d'attente dépassé"
+								? locale === "en"
+									? "Request timed out"
+									: "Délai d'attente dépassé"
 								: error.kind === ApiErrorKind.MalformedResponse
-									? "Réponse invalide"
-									: "Erreur"}
+									? locale === "en"
+										? "Invalid response"
+										: "Réponse invalide"
+									: locale === "en"
+										? "Error"
+										: "Erreur"}
 					</AlertTitle>
 					<AlertDescription>{error.message}</AlertDescription>
 				</Alert>
@@ -158,7 +180,7 @@ export function CVInputs({
 			{result !== null && !isLoading && (
 				<div className="space-y-4">
 					<h3 className="text-base font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
-						Résultats du matching
+						{locale === "en" ? "Matching results" : "Résultats du matching"}
 					</h3>
 					<div className="grid gap-4 md:grid-cols-3">
 						{result.candidates.map((c, i) => (
@@ -175,8 +197,9 @@ export function CVInputs({
 			{/* Empty state */}
 			{!isLoading && result === null && error === null && (
 				<div className="rounded-[8px] border border-dashed border-[var(--border-subtle)] bg-[var(--surface-secondary)] p-8 text-center text-sm text-[var(--text-tertiary)]">
-					Collez les CV ci-dessus et cliquez sur "Lancer le matching" pour voir
-					les résultats d'adéquation.
+					{locale === "en"
+						? "Paste the CVs above and click Run matching to see fit results."
+						: 'Collez les CV ci-dessus et cliquez sur "Lancer le matching" pour voir les résultats d\'adéquation.'}
 				</div>
 			)}
 		</section>

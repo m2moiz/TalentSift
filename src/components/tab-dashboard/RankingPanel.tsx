@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { DashboardOutput, RankingEntry } from "../../lib/types";
+import type { DashboardOutput, Locale, RankingEntry } from "../../lib/types";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
@@ -7,6 +7,7 @@ import { Skeleton } from "../ui/skeleton";
 // ── Props ────────────────────────────────────────────────────────────────────
 
 export interface RankingPanelProps {
+	readonly locale: Locale;
 	readonly output: DashboardOutput | null;
 	readonly status: "idle" | "loading" | "success" | "error";
 	readonly errorMessage?: string;
@@ -93,11 +94,12 @@ function LoadingState(): ReactElement {
 	);
 }
 
-function EmptyState(): ReactElement {
+function EmptyState(locale: Locale): ReactElement {
 	return (
 		<p className="py-8 text-center text-sm text-[var(--text-tertiary)]">
-			Le classement des candidats est généré automatiquement une fois le besoin
-			analysé et les CV évalués.
+			{locale === "en"
+				? "Candidate ranking is generated automatically once the need has been analyzed and the CVs have been evaluated."
+				: "Le classement des candidats est généré automatiquement une fois le besoin analysé et les CV évalués."}
 		</p>
 	);
 }
@@ -128,6 +130,7 @@ function ErrorState({
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export function RankingPanel({
+	locale,
 	output,
 	status,
 	errorMessage,
@@ -136,14 +139,21 @@ export function RankingPanel({
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Classement final</CardTitle>
+				<CardTitle>
+					{locale === "en" ? "Final ranking" : "Classement final"}
+				</CardTitle>
 			</CardHeader>
 			<CardContent>
 				{status === "loading" && <LoadingState />}
-				{status === "idle" && <EmptyState />}
+				{status === "idle" && EmptyState(locale)}
 				{status === "error" && (
 					<ErrorState
-						message={errorMessage ?? "Une erreur est survenue."}
+						message={
+							errorMessage ??
+							(locale === "en"
+								? "An error occurred."
+								: "Une erreur est survenue.")
+						}
 						onRetry={onRetry}
 					/>
 				)}
@@ -155,7 +165,9 @@ export function RankingPanel({
 						{output.opHistoryNote.length > 0 && (
 							<div className="mt-3 rounded-[8px] border border-[var(--status-info)]/20 bg-[var(--status-info)]/5 px-3 py-2 text-sm text-[var(--text-secondary)]">
 								<span className="font-medium text-[var(--status-info)]">
-									Impact historique :{" "}
+									{locale === "en"
+										? "Operational history impact: "
+										: "Impact historique : "}
 								</span>
 								{output.opHistoryNote}
 							</div>

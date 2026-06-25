@@ -1,10 +1,12 @@
 import type { ReactElement } from "react";
+import type { Locale } from "../../lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
 // ── Props ────────────────────────────────────────────────────────────────────
 
 export interface PitchScriptProps {
+	readonly locale: Locale;
 	readonly text: string | null;
 	readonly status: "idle" | "loading" | "success" | "error";
 	readonly errorMessage?: string;
@@ -26,11 +28,12 @@ function LoadingState(): ReactElement {
 	);
 }
 
-function EmptyState(): ReactElement {
+function EmptyState(locale: Locale): ReactElement {
 	return (
 		<p className="py-8 text-center text-sm text-[var(--text-tertiary)]">
-			Le pitch recruteur prêt à l'oral est généré automatiquement après le
-			classement.
+			{locale === "en"
+				? "The recruiter pitch is generated automatically after ranking."
+				: "Le pitch recruteur prêt à l'oral est généré automatiquement après le classement."}
 		</p>
 	);
 }
@@ -38,6 +41,7 @@ function EmptyState(): ReactElement {
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export function PitchScript({
+	locale,
 	text,
 	status,
 	errorMessage,
@@ -47,24 +51,29 @@ export function PitchScript({
 		<Card>
 			<CardHeader>
 				<div className="flex items-center justify-between">
-					<CardTitle>Pitch recruteur</CardTitle>
+					<CardTitle>
+						{locale === "en" ? "Recruiter pitch" : "Pitch recruteur"}
+					</CardTitle>
 					{text && onCopy && (
 						<button
 							type="button"
 							onClick={onCopy}
 							className="rounded-[6px] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--border-subtle)] hover:text-[var(--text-primary)]"
 						>
-							Copier
+							{locale === "en" ? "Copy" : "Copier"}
 						</button>
 					)}
 				</div>
 			</CardHeader>
 			<CardContent>
 				{status === "loading" && <LoadingState />}
-				{status === "idle" && <EmptyState />}
+				{status === "idle" && EmptyState(locale)}
 				{status === "error" && (
 					<p className="text-sm text-[var(--status-error)]">
-						{errorMessage ?? "Erreur de génération du pitch."}
+						{errorMessage ??
+							(locale === "en"
+								? "Pitch generation failed."
+								: "Erreur de génération du pitch.")}
 					</p>
 				)}
 				{status === "success" && text && (

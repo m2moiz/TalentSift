@@ -10,7 +10,7 @@ import type { ReactElement } from "react";
 import { useCallback } from "react";
 
 import type { NeedAnalysisStatus } from "../../hooks/useNeedAnalysis";
-import type { ApiError, NeedAnalysisOutput } from "../../lib/types";
+import type { ApiError, Locale, NeedAnalysisOutput } from "../../lib/types";
 import { ApiErrorKind } from "../../lib/types";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Badge } from "../ui/badge";
@@ -23,13 +23,29 @@ import { Skeleton } from "../ui/skeleton";
 export interface NeedResultProps {
 	readonly data: NeedAnalysisOutput | null;
 	readonly error: ApiError | null;
+	readonly locale: Locale;
 	readonly status: NeedAnalysisStatus;
 	readonly onRetry: () => void;
 }
 
 // ── Error Messages ───────────────────────────────────────────────────────────
 
-function errorTitle(kind: ApiErrorKind): string {
+function errorTitle(kind: ApiErrorKind, locale: Locale): string {
+	if (locale === "en") {
+		switch (kind) {
+			case ApiErrorKind.MissingKey:
+				return "Missing API key";
+			case ApiErrorKind.Timeout:
+				return "Request timed out";
+			case ApiErrorKind.MalformedResponse:
+				return "Invalid response";
+			case ApiErrorKind.HttpError:
+				return "Server error";
+			case ApiErrorKind.NetworkError:
+				return "Network error";
+		}
+	}
+
 	switch (kind) {
 		case ApiErrorKind.MissingKey:
 			return "Clé API manquante";
@@ -44,7 +60,22 @@ function errorTitle(kind: ApiErrorKind): string {
 	}
 }
 
-function errorDescription(kind: ApiErrorKind): string {
+function errorDescription(kind: ApiErrorKind, locale: Locale): string {
+	if (locale === "en") {
+		switch (kind) {
+			case ApiErrorKind.MissingKey:
+				return "The OpenAI API key is not configured. Add VITE_OPENAI_API_KEY to your .env file, or enable mock mode with VITE_MOCK_MODE=1.";
+			case ApiErrorKind.Timeout:
+				return "The analysis took too long. You can retry — the API may be temporarily slow.";
+			case ApiErrorKind.MalformedResponse:
+				return "The AI response could not be interpreted. Please retry.";
+			case ApiErrorKind.HttpError:
+				return "The OpenAI server returned an error. Check your API key and try again.";
+			case ApiErrorKind.NetworkError:
+				return "A network error occurred. Check your connection and try again.";
+		}
+	}
+
 	switch (kind) {
 		case ApiErrorKind.MissingKey:
 			return "La clé API OpenAI n'est pas configurée. Ajoutez VITE_OPENAI_API_KEY dans votre fichier .env, ou activez le mode mock avec VITE_MOCK_MODE=1.";
@@ -61,19 +92,19 @@ function errorDescription(kind: ApiErrorKind): string {
 
 // ── Empty State ──────────────────────────────────────────────────────────────
 
-function NeedEmpty(): ReactElement {
+function NeedEmpty(locale: Locale): ReactElement {
 	return (
 		<Card>
 			<CardContent className="flex flex-col items-center gap-4 py-12 text-center">
 				<Target className="h-10 w-10 text-[var(--text-tertiary)]" />
 				<div className="space-y-1">
 					<p className="text-sm font-medium text-[var(--text-primary)]">
-						Analyse du besoin
+						{locale === "en" ? "Need analysis" : "Analyse du besoin"}
 					</p>
 					<p className="max-w-sm text-sm leading-5 text-[var(--text-tertiary)]">
-						Renseignez le client, l'intitulé et la description du poste, puis
-						cliquez sur "Analyser le besoin" pour identifier les compétences
-						clés, les points de vigilance et le profil idéal.
+						{locale === "en"
+							? "Fill in the client, title, and job description, then click Analyze need to identify key skills, watch points, and the ideal profile."
+							: 'Renseignez le client, l\'intitulé et la description du poste, puis cliquez sur "Analyser le besoin" pour identifier les compétences clés, les points de vigilance et le profil idéal.'}
 					</p>
 				</div>
 			</CardContent>
@@ -125,9 +156,11 @@ function NeedLoading(): ReactElement {
 
 function NeedError({
 	error,
+	locale,
 	onRetry,
 }: {
 	readonly error: ApiError;
+	readonly locale: Locale;
 	readonly onRetry: () => void;
 }): ReactElement {
 	const handleRetry = useCallback(() => {
@@ -137,16 +170,16 @@ function NeedError({
 	return (
 		<Alert variant="error">
 			<AlertCircle className="h-4 w-4" />
-			<AlertTitle>{errorTitle(error.kind)}</AlertTitle>
+			<AlertTitle>{errorTitle(error.kind, locale)}</AlertTitle>
 			<AlertDescription className="space-y-3">
-				<p>{errorDescription(error.kind)}</p>
+				<p>{errorDescription(error.kind, locale)}</p>
 				<Button
 					variant="secondary"
 					size="sm"
 					onClick={handleRetry}
 					type="button"
 				>
-					Réessayer
+					{locale === "en" ? "Retry" : "Réessayer"}
 				</Button>
 			</AlertDescription>
 		</Alert>
@@ -282,11 +315,12 @@ function NeedSuccess({
 export function NeedResult({
 	data,
 	error,
+	locale,
 	status,
 	onRetry,
 }: NeedResultProps): ReactElement {
 	if (status === "idle") {
-		return <NeedEmpty />;
+		return NeedEmpty(locale);
 	}
 
 	if (status === "loading") {
@@ -294,7 +328,7 @@ export function NeedResult({
 	}
 
 	if (status === "error" && error !== null) {
-		return <NeedError error={error} onRetry={onRetry} />;
+		return <NeedError error={error} locale={locale} onRetry={onRetry} />;
 	}
 
 	if (status === "success" && data !== null) {
@@ -302,5 +336,5 @@ export function NeedResult({
 	}
 
 	// Fallback for unexpected intermediate states
-	return <NeedEmpty />;
+	return NeedEmpty(locale);
 }

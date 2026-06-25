@@ -10,7 +10,11 @@ import {
 import { useNeedAnalysis } from "../../hooks/useNeedAnalysis";
 import { useOpHistory } from "../../hooks/useOpHistory";
 import { cn } from "../../lib/cn";
-import type { NeedAnalysisOutput, NeedFormInput } from "../../lib/types";
+import type {
+	Locale,
+	NeedAnalysisOutput,
+	NeedFormInput,
+} from "../../lib/types";
 import { Button } from "../ui/button";
 import {
 	Card,
@@ -70,16 +74,23 @@ function FieldLabel({
 
 export interface NeedFormProps {
 	readonly initialForm?: NeedFormInput;
+	readonly locale: Locale;
 	readonly onAnalysisChange?: (data: NeedAnalysisOutput | null) => void;
 }
 
 export function NeedForm({
 	initialForm = EMPTY_FORM,
+	locale,
 	onAnalysisChange,
 }: NeedFormProps): ReactElement {
-	const { data, error, status, analyze, reset } = useNeedAnalysis();
+	const { data, error, status, analyze, reset } = useNeedAnalysis(locale);
 	const opHistory = useOpHistory();
 	const [form, setForm] = useState<NeedFormInput>(initialForm);
+
+	useEffect(() => {
+		setForm(initialForm);
+		reset();
+	}, [initialForm, reset]);
 
 	useEffect(() => {
 		onAnalysisChange?.(data);
@@ -116,10 +127,13 @@ export function NeedForm({
 			{/* Form card — always visible */}
 			<Card>
 				<CardHeader>
-					<CardTitle>Définir le besoin</CardTitle>
+					<CardTitle>
+						{locale === "en" ? "Define the hiring need" : "Définir le besoin"}
+					</CardTitle>
 					<CardDescription>
-						Saisissez les informations sur le poste à pourvoir pour générer une
-						analyse complète.
+						{locale === "en"
+							? "Fill in the role details to generate a complete hiring-need analysis."
+							: "Saisissez les informations sur le poste à pourvoir pour générer une analyse complète."}
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -140,7 +154,9 @@ export function NeedForm({
 							</div>
 							<div className="flex flex-col gap-2">
 								<FieldLabel htmlFor="need-op-manager">
-									Manager opérationnel
+									{locale === "en"
+										? "Operational manager"
+										: "Manager opérationnel"}
 								</FieldLabel>
 								<input
 									id="need-op-manager"
@@ -154,12 +170,16 @@ export function NeedForm({
 							</div>
 							<div className="flex flex-col gap-2">
 								<FieldLabel htmlFor="need-job-title">
-									Intitulé du poste
+									{locale === "en" ? "Job title" : "Intitulé du poste"}
 								</FieldLabel>
 								<input
 									id="need-job-title"
 									className={inputBase}
-									placeholder="Ex: Développeur Senior Java/Kafka"
+									placeholder={
+										locale === "en"
+											? "Ex: Senior Java/Kafka Developer"
+											: "Ex: Développeur Senior Java/Kafka"
+									}
 									type="text"
 									value={form.jobTitle}
 									onChange={handleChange("jobTitle")}
@@ -171,7 +191,9 @@ export function NeedForm({
 						{/* Row 2: TJM, Location, Start date, Remote */}
 						<div className="grid grid-cols-1 gap-4 md:grid-cols-4">
 							<div className="flex flex-col gap-2">
-								<FieldLabel htmlFor="need-tjm">TJM (€)</FieldLabel>
+								<FieldLabel htmlFor="need-tjm">
+									{locale === "en" ? "Daily rate (€)" : "TJM (€)"}
+								</FieldLabel>
 								<input
 									id="need-tjm"
 									className={inputBase}
@@ -183,7 +205,9 @@ export function NeedForm({
 								/>
 							</div>
 							<div className="flex flex-col gap-2">
-								<FieldLabel htmlFor="need-location">Localisation</FieldLabel>
+								<FieldLabel htmlFor="need-location">
+									{locale === "en" ? "Location" : "Localisation"}
+								</FieldLabel>
 								<input
 									id="need-location"
 									className={inputBase}
@@ -196,12 +220,14 @@ export function NeedForm({
 							</div>
 							<div className="flex flex-col gap-2">
 								<FieldLabel htmlFor="need-start-date">
-									Date de démarrage
+									{locale === "en" ? "Start date" : "Date de démarrage"}
 								</FieldLabel>
 								<input
 									id="need-start-date"
 									className={inputBase}
-									placeholder="Ex: 01/09/2026"
+									placeholder={
+										locale === "en" ? "Ex: 2026-09-01" : "Ex: 01/09/2026"
+									}
 									type="text"
 									value={form.startDate}
 									onChange={handleChange("startDate")}
@@ -209,7 +235,9 @@ export function NeedForm({
 								/>
 							</div>
 							<div className="flex flex-col gap-2">
-								<FieldLabel htmlFor="need-remote">Mode remote</FieldLabel>
+								<FieldLabel htmlFor="need-remote">
+									{locale === "en" ? "Remote mode" : "Mode remote"}
+								</FieldLabel>
 								<input
 									id="need-remote"
 									className={inputBase}
@@ -224,11 +252,17 @@ export function NeedForm({
 
 						{/* Row 3: JD textarea */}
 						<div className="flex flex-col gap-2">
-							<FieldLabel htmlFor="need-jd">Description du poste</FieldLabel>
+							<FieldLabel htmlFor="need-jd">
+								{locale === "en" ? "Job description" : "Description du poste"}
+							</FieldLabel>
 							<textarea
 								id="need-jd"
 								className={cn(inputBase, "min-h-[120px] resize-y")}
-								placeholder="Collez ici la description du poste (fiche de poste, email du client...)"
+								placeholder={
+									locale === "en"
+										? "Paste the job description here..."
+										: "Collez ici la description du poste (fiche de poste, email du client...)"
+								}
 								value={form.jobDescription}
 								onChange={handleChange("jobDescription")}
 								disabled={isLoading}
@@ -238,12 +272,18 @@ export function NeedForm({
 						{/* Row 4: Context/Qualification textarea */}
 						<div className="flex flex-col gap-2">
 							<FieldLabel htmlFor="need-context">
-								Contexte / Qualification
+								{locale === "en"
+									? "Context / qualification"
+									: "Contexte / Qualification"}
 							</FieldLabel>
 							<textarea
 								id="need-context"
 								className={cn(inputBase, "min-h-[80px] resize-y")}
-								placeholder="Informations complémentaires : contexte du projet, qualifications requises, spécificités du client..."
+								placeholder={
+									locale === "en"
+										? "Additional context, qualifications, or client specifics..."
+										: "Informations complémentaires : contexte du projet, qualifications requises, spécificités du client..."
+								}
 								value={form.contextQualification}
 								onChange={handleChange("contextQualification")}
 								disabled={isLoading}
@@ -254,7 +294,13 @@ export function NeedForm({
 						<div className="flex items-center gap-3">
 							<Button type="submit" size="lg" disabled={isLoading}>
 								<Sparkles className="h-4 w-4" />
-								{isLoading ? "Analyse en cours..." : "Analyser le besoin"}
+								{isLoading
+									? locale === "en"
+										? "Analyzing..."
+										: "Analyse en cours..."
+									: locale === "en"
+										? "Analyze need"
+										: "Analyser le besoin"}
 							</Button>
 							{status === "success" && (
 								<Button
@@ -264,7 +310,7 @@ export function NeedForm({
 									onClick={handleResetAndEdit}
 									disabled={isLoading}
 								>
-									Modifier les données
+									{locale === "en" ? "Edit inputs" : "Modifier les données"}
 								</Button>
 							)}
 						</div>
@@ -276,6 +322,7 @@ export function NeedForm({
 			<NeedResult
 				data={data}
 				error={error}
+				locale={locale}
 				status={status}
 				onRetry={handleRetry}
 			/>

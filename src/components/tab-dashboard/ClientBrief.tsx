@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { ClientBrief } from "../../lib/types";
+import type { ClientBrief, Locale } from "../../lib/types";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
@@ -8,6 +8,7 @@ import { Skeleton } from "../ui/skeleton";
 
 export interface ClientBriefProps {
 	readonly brief: ClientBrief | null;
+	readonly locale: Locale;
 	readonly status: "idle" | "loading" | "success" | "error";
 	readonly errorMessage?: string;
 	/** Expose the brief text for copy without wiring browser clipboard into App. */
@@ -136,11 +137,12 @@ function LoadingState(): ReactElement {
 	);
 }
 
-function EmptyState(): ReactElement {
+function EmptyState(locale: Locale): ReactElement {
 	return (
 		<p className="py-8 text-center text-sm text-[var(--text-tertiary)]">
-			La fiche client TDU est générée automatiquement après le classement des
-			candidats.
+			{locale === "en"
+				? "The TDU client brief is generated automatically after candidate ranking."
+				: "La fiche client TDU est générée automatiquement après le classement des candidats."}
 		</p>
 	);
 }
@@ -149,6 +151,7 @@ function EmptyState(): ReactElement {
 
 export function ClientBriefCard({
 	brief,
+	locale,
 	status,
 	errorMessage,
 	onCopy,
@@ -157,24 +160,29 @@ export function ClientBriefCard({
 		<Card>
 			<CardHeader>
 				<div className="flex items-center justify-between">
-					<CardTitle>Brief client (TDU)</CardTitle>
+					<CardTitle>
+						{locale === "en" ? "Client brief (TDU)" : "Brief client (TDU)"}
+					</CardTitle>
 					{brief && onCopy && (
 						<button
 							type="button"
 							onClick={onCopy}
 							className="rounded-[6px] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--border-subtle)] hover:text-[var(--text-primary)]"
 						>
-							Copier
+							{locale === "en" ? "Copy" : "Copier"}
 						</button>
 					)}
 				</div>
 			</CardHeader>
 			<CardContent>
 				{status === "loading" && <LoadingState />}
-				{status === "idle" && <EmptyState />}
+				{status === "idle" && EmptyState(locale)}
 				{status === "error" && (
 					<p className="text-sm text-[var(--status-error)]">
-						{errorMessage ?? "Erreur de génération du brief."}
+						{errorMessage ??
+							(locale === "en"
+								? "Brief generation failed."
+								: "Erreur de génération du brief.")}
 					</p>
 				)}
 				{status === "success" && brief && <BriefContent brief={brief} />}
