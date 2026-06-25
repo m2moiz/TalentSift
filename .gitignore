@@ -7,3 +7,10 @@ dist-ssr
 !.env.example
 .DS_Store
 var/
+.beads/
+RESEARCH-*.md
+SPEC.md
+DESIGN.md
+osint-resume-verification-tools.md
+AGENTS.md
+Hackathon Docs/
