@@ -1,64 +1,75 @@
+import { useState } from "react";
 import type { ReactElement } from "react";
 
-export function App(): ReactElement {
-	return (
-		<main className="min-h-[100dvh] bg-[var(--surface-primary)] text-[var(--text-primary)]">
-			<div className="mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col gap-8 px-6 py-10 md:px-10">
-				<header className="space-y-3 border-b border-[var(--border-default)] pb-6">
-					<p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-tertiary)]">
-						TDU Ultimate Builder Night
-					</p>
-					<div className="space-y-2">
-						<h1 className="max-w-3xl text-4xl font-bold tracking-[-0.03em] md:text-5xl">
-							Recruiter copilot bootstrap is ready.
-						</h1>
-						<p className="max-w-2xl text-base text-[var(--text-secondary)] md:text-lg">
-							The app scaffold, design system, and build pipeline are in place.
-							Next, the recruiter workflow layers can be implemented in
-							parallel.
-						</p>
-					</div>
-				</header>
+import { AppShell } from "./components/layout/AppShell";
+import type { TabId } from "./components/layout/TabBar";
 
-				<section className="grid gap-4 md:grid-cols-3">
-					<article className="rounded-[12px] border border-[var(--border-default)] bg-[var(--surface-secondary)] p-6">
-						<p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-tertiary)]">
-							Wave 1
-						</p>
-						<h2 className="mt-3 text-xl font-semibold tracking-[-0.02em]">
-							Shared core
-						</h2>
-						<p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-							Types, API wrapper, prompts, utilities, layout shell, UI
-							primitives, and operational history state.
-						</p>
-					</article>
-					<article className="rounded-[12px] border border-[var(--border-default)] bg-[var(--surface-secondary)] p-6">
-						<p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-tertiary)]">
-							Wave 2
-						</p>
-						<h2 className="mt-3 text-xl font-semibold tracking-[-0.02em]">
-							Recruiter tabs
-						</h2>
-						<p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-							Need analysis, CV matching, dashboard outputs, and demo-prefill
-							data for the Kafka scenario.
-						</p>
-					</article>
-					<article className="rounded-[12px] border border-[var(--border-default)] bg-[var(--surface-secondary)] p-6">
-						<p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-tertiary)]">
-							Wave 3
-						</p>
-						<h2 className="mt-3 text-xl font-semibold tracking-[-0.02em]">
-							Demo readiness
-						</h2>
-						<p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-							Error states, loading skeletons, environment wiring, and the final
-							2-minute walkthrough polish.
-						</p>
-					</article>
-				</section>
+export function App(): ReactElement {
+	const [activeTab, setActiveTab] = useState<TabId>("need");
+	const [opContext, setOpContext] = useState("");
+
+	return (
+		<AppShell
+			activeTab={activeTab}
+			onTabChange={setActiveTab}
+			opHistoryProps={{
+				text: "Operation",
+				value: opContext,
+				onChange: setOpContext,
+			}}
+		>
+			{activeTab === "need" && <NeedPlaceholder />}
+			{activeTab === "cvs" && <CvsPlaceholder />}
+			{activeTab === "dashboard" && <DashboardPlaceholder />}
+		</AppShell>
+	);
+}
+
+function NeedPlaceholder(): ReactElement {
+	return (
+		<section className="space-y-4">
+			<h2 className="text-lg font-semibold tracking-[-0.02em]">
+				Need Analysis
+			</h2>
+			<p className="max-w-prose text-sm leading-6 text-[var(--text-secondary)]">
+				Define the hiring need — role, requirements, context. Candidate CV
+				matching will appear here once the analysis is complete.
+			</p>
+			<div className="rounded-[8px] border border-dashed border-[var(--border-subtle)] bg-[var(--surface-secondary)] p-8 text-center text-sm text-[var(--text-tertiary)]">
+				Need input panel — coming in next wave
 			</div>
-		</main>
+		</section>
+	);
+}
+
+function CvsPlaceholder(): ReactElement {
+	return (
+		<section className="space-y-4">
+			<h2 className="text-lg font-semibold tracking-[-0.02em]">
+				CV Review
+			</h2>
+			<p className="max-w-prose text-sm leading-6 text-[var(--text-secondary)]">
+				Uploaded CVs will be listed here with match scores, key findings, and
+				verification results.
+			</p>
+			<div className="rounded-[8px] border border-dashed border-[var(--border-subtle)] bg-[var(--surface-secondary)] p-8 text-center text-sm text-[var(--text-tertiary)]">
+				CV list panel — coming in next wave
+			</div>
+		</section>
+	);
+}
+
+function DashboardPlaceholder(): ReactElement {
+	return (
+		<section className="space-y-4">
+			<h2 className="text-lg font-semibold tracking-[-0.02em]">Dashboard</h2>
+			<p className="max-w-prose text-sm leading-6 text-[var(--text-secondary)]">
+				Summary view — overall match analytics, top candidates, and action
+				items for the recruiter.
+			</p>
+			<div className="rounded-[8px] border border-dashed border-[var(--border-subtle)] bg-[var(--surface-secondary)] p-8 text-center text-sm text-[var(--text-tertiary)]">
+				Dashboard panel — coming in next wave
+			</div>
+		</section>
 	);
 }
