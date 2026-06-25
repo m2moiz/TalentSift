@@ -3,19 +3,20 @@ import type { ReactElement } from "react";
 
 import { AppShell } from "./components/layout/AppShell";
 import type { TabId } from "./components/layout/TabBar";
+import { useOpHistory } from "./hooks/useOpHistory";
 
 export function App(): ReactElement {
+	const { text: opHistoryText, setText: setOpHistoryText } = useOpHistory();
 	const [activeTab, setActiveTab] = useState<TabId>("need");
-	const [opContext, setOpContext] = useState("");
 
 	return (
 		<AppShell
 			activeTab={activeTab}
 			onTabChange={setActiveTab}
 			opHistoryProps={{
-				text: "Operation",
-				value: opContext,
-				onChange: setOpContext,
+				text: "Operational history",
+				value: opHistoryText,
+				onChange: setOpHistoryText,
 			}}
 		>
 			{activeTab === "need" && <NeedPlaceholder />}
