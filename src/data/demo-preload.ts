@@ -1,4 +1,4 @@
-import type { CvEntry, NeedFormInput } from "../lib/types";
+import type { CvEntry, Locale, NeedFormInput } from "../lib/types";
 
 // ── Demo Seed Data ────────────────────────────────────────────────────────────
 //
@@ -51,6 +51,38 @@ export const DEMO_JD: string = [
 	"du système de paiement interbancaire.",
 ].join("\n");
 
+export const DEMO_JD_EN: string = [
+	"Senior Java / Kafka Developer",
+	"",
+	"Our client, a major French bank, is looking for a Senior Java / Kafka Developer to strengthen its Core Banking team.",
+	"",
+	"Responsibilities:",
+	"• Design and build real-time data pipelines with Apache Kafka (Kafka Streams, KSQL)",
+	"• Contribute to the evolution of the microservices technical foundation (Spring Boot, event-driven architecture)",
+	"• Ensure scalability and resilience of transaction flows (high volume, low latency)",
+	"• Work closely with Data and Infrastructure teams",
+	"",
+	"Required skills:",
+	"• Java 17+, Spring Boot, JPA/Hibernate",
+	"• Apache Kafka (production, Kafka Streams, Schema Registry)",
+	"• Microservices and event-driven architecture knowledge",
+	"• SQL, relational databases (PostgreSQL)",
+	"",
+	"Nice to have:",
+	"• Confluent Kafka Platform",
+	"• Kubernetes, Docker",
+	"• CI/CD (GitLab CI)",
+	"• Banking domain knowledge",
+	"",
+	"Constraints:",
+	"• Daily rate: 550–650 €",
+	"• Location: Paris 9th district (onsite 2-3 days/week)",
+	"• Start date: September 2026",
+	"• Duration: 12 months minimum",
+	"",
+	"Context: mission as part of a core interbank payment modernization program.",
+].join("\n");
+
 // ── Candidate CVs ─────────────────────────────────────────────────────────────
 
 /**
@@ -93,6 +125,37 @@ export const DEMO_CV_KAFKA_SPECIALIST: string = [
 	"2017 — Diplôme Ingénieur INSA Lyon, spécialité Informatique",
 ].join("\n");
 
+export const DEMO_CV_KAFKA_SPECIALIST_EN: string = [
+	"Aïssa B.",
+	"Kafka Architect / Senior Java Developer",
+	"",
+	"---",
+	"WORK EXPERIENCE",
+	"",
+	"2022–2026 — Lead Kafka Engineer, BNP Paribas, Paris",
+	"• Designed and deployed a Kafka platform (6 clusters, 150+ topics) for real-time SEPA payment flows",
+	"• Built Kafka Streams pipelines in Java 17 handling 2M+ transactions/day",
+	"• Implemented Avro Schema Registry and schema governance",
+	"• Managed Kafka Connect connectors (JDBC, Elasticsearch)",
+	"",
+	"2019–2022 — Backend Java Developer, Société Générale",
+	"• Built Spring Boot microservices for equity order processing",
+	"• Migrated SOA systems to event-driven architecture with Kafka",
+	"• Improved latency (<50ms) and tripled throughput",
+	"",
+	"2017–2019 — Java Developer, Capgemini",
+	"• Built Spring Boot REST APIs for a banking client",
+	"• Worked with GitLab CI, Docker, and Kubernetes deployment",
+	"",
+	"---",
+	"SKILLS",
+	"Java 17, Spring Boot, Kafka Streams, Kafka Connect, Avro, KSQL, PostgreSQL, Kubernetes, Docker, GitLab CI, Confluent Platform",
+	"",
+	"---",
+	"EDUCATION",
+	"2017 — Engineering degree, INSA Lyon, Computer Science",
+].join("\n");
+
 /**
  * CV2 — Product Owner / IT Project Manager (weak match for pure Java/Kafka role).
  * Excellent profile in delivery management, not in development.
@@ -129,6 +192,36 @@ export const DEMO_CV_PO: string = [
 	"2016 — Master Management des Systèmes d'Information, HEC Paris",
 ].join("\n");
 
+export const DEMO_CV_PO_EN: string = [
+	"Clément D.",
+	"Product Owner / IT Project Manager",
+	"",
+	"---",
+	"WORK EXPERIENCE",
+	"",
+	"2021–2026 — Product Owner, La Poste, Paris",
+	"• Owned the application roadmap for an 8-developer team",
+	"• Wrote functional and technical specifications",
+	"• Prioritized backlog and led agile ceremonies",
+	"• Coordinated between business teams and IT",
+	"",
+	"2018–2021 — IT Project Manager, Orange",
+	"• Led a GDPR compliance project",
+	"• Managed budget, planning, and executive reporting",
+	"",
+	"2016–2018 — Assistant Project Manager, Accenture",
+	"• Supported IT delivery programs for a telecom client",
+	"• Prepared specifications and coordinated vendors",
+	"",
+	"---",
+	"SKILLS",
+	"Product ownership, agile delivery (SAFe, Scrum), specifications writing, JIRA, Confluence, SQL (basic queries), Java fundamentals (internal training)",
+	"",
+	"---",
+	"EDUCATION",
+	"2016 — Master's degree in Information Systems Management, HEC Paris",
+].join("\n");
+
 /**
  * CV3 — Data engineer / architect (medium match).
  * Has data pipeline skills and some Java but not Kafka-streams deep.
@@ -162,6 +255,33 @@ export const DEMO_CV_DATA_ARCHITECT: string = [
 	"2017 — Diplôme Ingénieur CentraleSupélec, Data Science",
 ].join("\n");
 
+export const DEMO_CV_DATA_ARCHITECT_EN: string = [
+	"Salima E.",
+	"Data Engineer / Data Architect",
+	"",
+	"---",
+	"WORK EXPERIENCE",
+	"",
+	"2020–2026 — Data Engineer, AXA France, Paris",
+	"• Designed and maintained a Hadoop/Spark data lake",
+	"• Built ETL pipelines in Python and Scala",
+	"• Delivered a Kafka proof-of-concept for real-time claims ingestion",
+	"• Administered PostgreSQL and Cassandra databases",
+	"",
+	"2017–2020 — Big Data Engineer, Thales",
+	"• Built Spark Streaming pipelines in Scala",
+	"• Contributed to cloud data architecture on AWS",
+	"• Automated deployments with Ansible and Terraform",
+	"",
+	"---",
+	"SKILLS",
+	"Python, Scala, Spark, Hadoop, Kafka (operational fundamentals), PostgreSQL, Cassandra, AWS, Terraform, Ansible, Git",
+	"",
+	"---",
+	"EDUCATION",
+	"2017 — Engineering degree, CentraleSupélec, Data Science",
+].join("\n");
+
 /**
  * Convenience array of all 3 CV strings in demo order.
  */
@@ -179,6 +299,39 @@ export const DEMO_CANDIDATE_NAMES: readonly [string, string, string] = [
 	"Clément D.",
 	"Salima E.",
 ] as const;
+
+export function getDemoNeedForm(locale: Locale): NeedFormInput {
+	if (locale === "en") {
+		return {
+			client: "French Bank — Core Banking Modernization",
+			operationalManager: "Sophie Martin",
+			jobTitle: "Senior Java / Kafka Developer",
+			jobDescription: DEMO_JD_EN,
+			contextQualification:
+				"Long mission in a critical banking environment with strong expectations on code quality, flow resilience, and collaboration with infrastructure and data teams.",
+			tjm: "550–650 €",
+			location: "Paris 9th district, hybrid 2–3 days/week",
+			startDate: "September 2026",
+			remoteMode: "Hybrid",
+		};
+	}
+
+	return DEMO_NEED_FORM;
+}
+
+export function getDemoCvEntries(
+	locale: Locale,
+): readonly [CvEntry, CvEntry, CvEntry] {
+	if (locale === "en") {
+		return [
+			{ name: DEMO_CANDIDATE_NAMES[0], cvText: DEMO_CV_KAFKA_SPECIALIST_EN },
+			{ name: DEMO_CANDIDATE_NAMES[1], cvText: DEMO_CV_PO_EN },
+			{ name: DEMO_CANDIDATE_NAMES[2], cvText: DEMO_CV_DATA_ARCHITECT_EN },
+		];
+	}
+
+	return DEMO_CV_ENTRIES;
+}
 
 export const DEMO_NEED_FORM: NeedFormInput = {
 	client: "Banque Française — Modernisation Core Banking",
