@@ -11,7 +11,7 @@ const RESPONSES_API_URL = "https://api.openai.com/v1/responses";
 const REQUEST_TIMEOUT_MS = 45_000;
 
 function readMockConfig(): MockConfig {
-	const raw = import.meta.env["VITE_MOCK_MODE"];
+	const raw = import.meta.env.VITE_MOCK_MODE;
 	const enabled = raw === "1" || raw === "true";
 	return { enabled, delayMs: 300 };
 }
@@ -19,7 +19,7 @@ function readMockConfig(): MockConfig {
 // ── API Key ──────────────────────────────────────────────────────────────────
 
 function getApiKey(): string | null {
-	return import.meta.env["VITE_OPENAI_API_KEY"] ?? null;
+	return import.meta.env.VITE_OPENAI_API_KEY ?? null;
 }
 
 // ── Error Factory ────────────────────────────────────────────────────────────
@@ -72,8 +72,9 @@ function extractTextFromResponse(body: ResponsesApiOutput): string {
 				continue;
 			}
 			const text = content
-				.filter((c): c is { readonly type: "output_text"; readonly text: string } =>
-					c.type === "output_text" && typeof c.text === "string",
+				.filter(
+					(c): c is { readonly type: "output_text"; readonly text: string } =>
+						c.type === "output_text" && typeof c.text === "string",
 				)
 				.map((c) => c.text)
 				.join("");
@@ -94,10 +95,7 @@ function extractTextFromResponse(body: ResponsesApiOutput): string {
 export async function callResponsesApi(prompt: string): Promise<string> {
 	const apiKey = getApiKey();
 	if (apiKey === null || apiKey.length === 0) {
-		throw makeError(
-			ApiErrorKind.MissingKey,
-			"VITE_OPENAI_API_KEY is not set",
-		);
+		throw makeError(ApiErrorKind.MissingKey, "VITE_OPENAI_API_KEY is not set");
 	}
 
 	const controller = new AbortController();
@@ -177,9 +175,7 @@ export async function callApi(
 
 	if (mockConfig.enabled) {
 		if (mockResponseText !== undefined && mockResponseText.length > 0) {
-			await new Promise((resolve) =>
-				setTimeout(resolve, mockConfig.delayMs),
-			);
+			await new Promise((resolve) => setTimeout(resolve, mockConfig.delayMs));
 			return mockResponseText;
 		}
 		throw makeError(

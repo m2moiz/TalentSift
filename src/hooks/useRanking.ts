@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import { callApiForJson } from "../lib/api";
+import { buildRankingPrompt } from "../lib/prompts";
 import type {
 	CandidateMatch,
 	DashboardOutput,
@@ -6,8 +8,6 @@ import type {
 	OperationHistory,
 } from "../lib/types";
 import { ApiErrorKind } from "../lib/types";
-import { callApiForJson } from "../lib/api";
-import { buildRankingPrompt } from "../lib/prompts";
 
 // ── State Types ───────────────────────────────────────────────────────────────
 
@@ -141,22 +141,14 @@ export function useRanking(): UseRankingReturn {
 			try {
 				const prompt = buildRankingPrompt(need, candidates, opHistory);
 				const mockText = JSON.stringify(MOCK_DASHBOARD_OUTPUT);
-				const output = await callApiForJson<DashboardOutput>(
-					prompt,
-					mockText,
-				);
+				const output = await callApiForJson<DashboardOutput>(prompt, mockText);
 
 				// Validate output has the expected shape before storing
-				if (
-					!output.ranking ||
-					!output.clientBrief ||
-					!output.clientBrief.firstName
-				) {
+				if (!output.ranking || !output.clientBrief?.firstName) {
 					setStatus({
 						kind: "error",
 						message:
-							"Le classement généré est incomplet. " +
-							"Veuillez réessayer.",
+							"Le classement généré est incomplet. " + "Veuillez réessayer.",
 					});
 					return;
 				}
@@ -179,15 +171,13 @@ export function useRanking(): UseRankingReturn {
 					setStatus({
 						kind: "error",
 						message:
-							"La génération a pris trop de temps. " +
-							"Veuillez réessayer.",
+							"La génération a pris trop de temps. " + "Veuillez réessayer.",
 					});
 				} else if (kind === ApiErrorKind.MalformedResponse) {
 					setStatus({
 						kind: "error",
 						message:
-							"La réponse de l'IA est mal formatée. " +
-							"Veuillez réessayer.",
+							"La réponse de l'IA est mal formatée. " + "Veuillez réessayer.",
 					});
 				} else {
 					setStatus({
@@ -205,7 +195,9 @@ export function useRanking(): UseRankingReturn {
 	}, []);
 
 	const output =
-		status.kind === "success" ? status.output : (null as DashboardOutput | null);
+		status.kind === "success"
+			? status.output
+			: (null as DashboardOutput | null);
 
 	return { status, output, runRanking, reset };
 }

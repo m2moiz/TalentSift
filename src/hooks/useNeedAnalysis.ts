@@ -64,10 +64,7 @@ export function useNeedAnalysis(): UseNeedAnalysisReturn {
 	const [status, setStatus] = useState<NeedAnalysisStatus>("idle");
 
 	const analyze = useCallback(
-		async (
-			form: NeedFormInput,
-			opHistory: OperationHistory,
-		): Promise<void> => {
+		async (form: NeedFormInput, opHistory: OperationHistory): Promise<void> => {
 			setStatus("loading");
 			setError(null);
 			setData(null);

@@ -1,15 +1,15 @@
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
+import { callApiForJson } from "../lib/api";
+import { buildMatchCvsPrompt } from "../lib/prompts";
 import type {
+	ApiError,
 	CandidateMatch,
 	CvEntry,
 	CvMatchOutput,
 	NeedAnalysisOutput,
 	OperationHistory,
-	ApiError,
 } from "../lib/types";
 import { ApiErrorKind } from "../lib/types";
-import { callApiForJson } from "../lib/api";
-import { buildMatchCvsPrompt } from "../lib/prompts";
 
 // ── State ────────────────────────────────────────────────────────────────────
 
@@ -50,7 +50,7 @@ const DEFAULT_ENTRIES: readonly [CvEntry, CvEntry, CvEntry] = [
 
 function buildMockMatchingJson(candidateNames: readonly string[]): string {
 	const names =
-		candidateNames[0]?.trim().length ?? 0 > 0
+		(candidateNames[0]?.trim().length ?? 0) > 0
 			? candidateNames
 			: ["Candidat 1", "Candidat 2", "Candidat 3"];
 
@@ -130,26 +130,23 @@ function buildMockMatchingJson(candidateNames: readonly string[]): string {
 export function useCvMatching(
 	needAnalysis: NeedAnalysisOutput | null,
 	opHistory: OperationHistory,
+	initialEntries: readonly [CvEntry, CvEntry, CvEntry] = DEFAULT_ENTRIES,
 ): CvMatchingState & CvMatchingActions {
-	const [cvEntries, setCvEntries] = useState<
-		readonly [CvEntry, CvEntry, CvEntry]
-	>(DEFAULT_ENTRIES);
+	const [cvEntries, setCvEntries] =
+		useState<readonly [CvEntry, CvEntry, CvEntry]>(initialEntries);
 	const [result, setResult] = useState<CvMatchOutput | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<ApiError | null>(null);
 
-	const setCvEntry = useCallback(
-		(index: number, entry: CvEntry): void => {
-			setCvEntries((prev) => {
-				const next = [...prev] as [CvEntry, CvEntry, CvEntry];
-				if (index >= 0 && index < next.length) {
-					next[index] = entry;
-				}
-				return next;
-			});
-		},
-		[],
-	);
+	const setCvEntry = useCallback((index: number, entry: CvEntry): void => {
+		setCvEntries((prev) => {
+			const next = [...prev] as [CvEntry, CvEntry, CvEntry];
+			if (index >= 0 && index < next.length) {
+				next[index] = entry;
+			}
+			return next;
+		});
+	}, []);
 
 	const clearResults = useCallback((): void => {
 		setResult(null);
@@ -187,19 +184,12 @@ export function useCvMatching(
 				cvEntries.map((e) => e.cvText),
 			);
 
-			const mockResponse = buildMockMatchingJson(
-				cvEntries.map((e) => e.name),
-			);
+			const mockResponse = buildMockMatchingJson(cvEntries.map((e) => e.name));
 
-			const output = await callApiForJson<CvMatchOutput>(
-				prompt,
-				mockResponse,
-			);
+			const output = await callApiForJson<CvMatchOutput>(prompt, mockResponse);
 
 			const validated: CvMatchOutput = {
-				candidates: output.candidates.map(
-					(c: CandidateMatch) => c,
-				),
+				candidates: output.candidates.map((c: CandidateMatch) => c),
 			};
 
 			setResult(validated);

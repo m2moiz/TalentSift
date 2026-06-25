@@ -1,9 +1,4 @@
-import {
-	createContext,
-	useContext,
-	useState,
-	type ReactNode,
-} from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
 
 export interface OpHistoryValue {
 	readonly text: string;
@@ -12,7 +7,11 @@ export interface OpHistoryValue {
 
 const OpHistoryContext = createContext<OpHistoryValue | null>(null);
 
-export function OpHistoryProvider({ children }: { readonly children: ReactNode }): ReactNode {
+export function OpHistoryProvider({
+	children,
+}: {
+	readonly children: ReactNode;
+}): ReactNode {
 	const [text, setText] = useState("");
 
 	return (
