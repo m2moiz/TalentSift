@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
+import type { DashboardOutput, RankingEntry } from "../../lib/types";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
-import type { DashboardOutput, RankingEntry } from "../../lib/types";
 
 // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -96,8 +96,8 @@ function LoadingState(): ReactElement {
 function EmptyState(): ReactElement {
 	return (
 		<p className="py-8 text-center text-sm text-[var(--text-tertiary)]">
-			Analysez les besoins et les CVs pour générer le classement des
-			candidats.
+			Le classement des candidats est généré automatiquement une fois le besoin
+			analysé et les CV évalués.
 		</p>
 	);
 }

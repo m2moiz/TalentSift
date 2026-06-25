@@ -1,8 +1,8 @@
 import type { ReactElement, ReactNode } from "react";
-import type { TabId } from "./TabBar";
-import { TabBar } from "./TabBar";
 import type { OpHistoryBarProps } from "./OpHistoryBar";
 import { OpHistoryBar } from "./OpHistoryBar";
+import type { TabId } from "./TabBar";
+import { TabBar } from "./TabBar";
 
 export interface AppShellProps {
 	readonly activeTab: TabId;

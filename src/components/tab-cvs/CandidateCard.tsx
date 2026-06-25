@@ -1,12 +1,7 @@
 import type { ReactElement } from "react";
 import type { CandidateMatch } from "../../lib/types";
-import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardContent,
-} from "../ui/card";
 import { Badge } from "../ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
 // ── Props ────────────────────────────────────────────────────────────────────
@@ -101,12 +96,8 @@ export function CandidateCard({
 					</div>
 				</div>
 				<div className="mt-2 flex flex-wrap gap-2">
-					<Badge variant={badgeVariant}>
-						{candidate.matchScore}
-					</Badge>
-					<Badge variant={recBadgeVariant}>
-						{candidate.recommendation}
-					</Badge>
+					<Badge variant={badgeVariant}>{candidate.matchScore}</Badge>
+					<Badge variant={recBadgeVariant}>{candidate.recommendation}</Badge>
 				</div>
 			</CardHeader>
 
@@ -115,9 +106,9 @@ export function CandidateCard({
 				{candidate.strengths.length > 0 && (
 					<Section label="Forces">
 						<ul className="list-inside list-disc space-y-1">
-							{candidate.strengths.map((s, i) => (
+							{candidate.strengths.map((s) => (
 								<li
-									key={i}
+									key={s}
 									className="text-sm leading-5 text-[var(--text-secondary)]"
 								>
 									{s}
@@ -131,9 +122,9 @@ export function CandidateCard({
 				{candidate.watchPoints.length > 0 && (
 					<Section label="Points de vigilance">
 						<ul className="list-inside list-disc space-y-1">
-							{candidate.watchPoints.map((w, i) => (
+							{candidate.watchPoints.map((w) => (
 								<li
-									key={i}
+									key={w}
 									className="text-sm leading-5 text-[var(--text-secondary)]"
 								>
 									{w}
@@ -147,9 +138,9 @@ export function CandidateCard({
 				{candidate.callQuestions.length > 0 && (
 					<Section label="Questions d'entretien">
 						<ul className="list-inside list-disc space-y-1">
-							{candidate.callQuestions.map((q, i) => (
+							{candidate.callQuestions.map((q) => (
 								<li
-									key={i}
+									key={q}
 									className="text-sm leading-5 text-[var(--text-secondary)]"
 								>
 									{q}

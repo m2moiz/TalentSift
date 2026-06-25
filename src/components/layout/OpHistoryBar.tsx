@@ -28,7 +28,7 @@ export function OpHistoryBar({
 				onChange={(e) => {
 					onChange(e.target.value);
 				}}
-				placeholder="Current operation context..."
+				placeholder="Biais, préférences ou notes sur le manager..."
 				type="text"
 				value={value}
 			/>

@@ -1,9 +1,9 @@
 import { type ReactElement, useCallback } from "react";
-import type { CvEntry, CvMatchOutput, ApiError } from "../../lib/types";
+import type { ApiError, CvEntry, CvMatchOutput } from "../../lib/types";
 import { ApiErrorKind } from "../../lib/types";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 import { CandidateCard } from "./CandidateCard";
 
 // ── Props ────────────────────────────────────────────────────────────────────
@@ -23,9 +23,9 @@ export interface CVInputsProps {
 // ── Labels ───────────────────────────────────────────────────────────────────
 
 const CV_LABELS = [
-	{ name: "CV 1 — Candidat", placeholder: "Collez le texte du CV 1 ici..." },
-	{ name: "CV 2 — Candidat", placeholder: "Collez le texte du CV 2 ici..." },
-	{ name: "CV 3 — Candidat", placeholder: "Collez le texte du CV 3 ici..." },
+	{ name: "CV 1", placeholder: "Collez le texte du CV 1 ici..." },
+	{ name: "CV 2", placeholder: "Collez le texte du CV 2 ici..." },
+	{ name: "CV 3", placeholder: "Collez le texte du CV 3 ici..." },
 ] as const;
 
 const CV_NAME_PLACEHOLDER = "Nom du candidat (optionnel)";
@@ -72,8 +72,9 @@ export function CVInputs({
 					Matching CV
 				</h2>
 				<p className="mt-1 max-w-prose text-sm leading-6 text-[var(--text-secondary)]">
-					Collez les CV de votre shortlist (3 maximum) pour évaluer
-					l'adéquation avec le besoin analysé.
+					Collez les CV de votre shortlist (3 maximum) pour évaluer l'adéquation
+					avec le besoin analysé, obtenir un score, des forces, des points de
+					vigilance et des questions d'entretien.
 				</p>
 			</div>
 
@@ -82,7 +83,7 @@ export function CVInputs({
 				{CV_LABELS.map((label, index) => {
 					const entry = cvEntries[index];
 					return (
-						<div key={index} className="flex flex-col gap-2">
+						<div key={label.name} className="flex flex-col gap-2">
 							<div className="flex items-center gap-2">
 								<input
 									type="text"
@@ -111,16 +112,13 @@ export function CVInputs({
 
 			{/* Actions */}
 			<div className="flex items-center gap-3">
-				<Button
-					onClick={onRunMatching}
-					disabled={isLoading || !hasCvContent}
-				>
+				<Button onClick={onRunMatching} disabled={isLoading || !hasCvContent}>
 					{isLoading ? "Analyse en cours..." : "Run Matching"}
 				</Button>
 
 				{!hasAnalysis && (
 					<p className="text-xs text-[var(--status-warning)]">
-						Analysez d'abord le besoin dans l'onglet Need
+						Analysez d'abord le besoin dans l'onglet Analyse du besoin
 					</p>
 				)}
 
@@ -165,7 +163,7 @@ export function CVInputs({
 					<div className="grid gap-4 md:grid-cols-3">
 						{result.candidates.map((c, i) => (
 							<CandidateCard
-								key={i}
+								key={`${c.name}-${c.numericScore}`}
 								candidate={c}
 								index={i + 1}
 							/>
@@ -177,7 +175,7 @@ export function CVInputs({
 			{/* Empty state */}
 			{!isLoading && result === null && error === null && (
 				<div className="rounded-[8px] border border-dashed border-[var(--border-subtle)] bg-[var(--surface-secondary)] p-8 text-center text-sm text-[var(--text-tertiary)]">
-					Collez les CV ci-dessus et cliquez sur "Run Matching" pour voir
+					Collez les CV ci-dessus et cliquez sur "Lancer le matching" pour voir
 					les résultats d'adéquation.
 				</div>
 			)}

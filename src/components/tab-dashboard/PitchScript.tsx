@@ -29,7 +29,8 @@ function LoadingState(): ReactElement {
 function EmptyState(): ReactElement {
 	return (
 		<p className="py-8 text-center text-sm text-[var(--text-tertiary)]">
-			Le script de pitch recruteur sera généré après le classement.
+			Le pitch recruteur prêt à l'oral est généré automatiquement après le
+			classement.
 		</p>
 	);
 }

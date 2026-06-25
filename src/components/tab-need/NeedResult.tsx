@@ -1,6 +1,13 @@
-import { useCallback } from "react";
-import { AlertCircle, CheckCircle2, Lightbulb, Target, TrendingUp, UserCheck } from "lucide-react";
+import {
+	AlertCircle,
+	CheckCircle2,
+	Lightbulb,
+	Target,
+	TrendingUp,
+	UserCheck,
+} from "lucide-react";
 import type { ReactElement } from "react";
+import { useCallback } from "react";
 
 import type { NeedAnalysisStatus } from "../../hooks/useNeedAnalysis";
 import type { ApiError, NeedAnalysisOutput } from "../../lib/types";
@@ -64,8 +71,9 @@ function NeedEmpty(): ReactElement {
 						Analyse du besoin
 					</p>
 					<p className="max-w-sm text-sm leading-5 text-[var(--text-tertiary)]">
-						Remplissez le formulaire ci-dessus puis cliquez sur "Analyser le
-						besoin" pour générer une analyse complète du poste à pourvoir.
+						Renseignez le client, l'intitulé et la description du poste, puis
+						cliquez sur "Analyser le besoin" pour identifier les compétences
+						clés, les points de vigilance et le profil idéal.
 					</p>
 				</div>
 			</CardContent>
@@ -118,7 +126,10 @@ function NeedLoading(): ReactElement {
 function NeedError({
 	error,
 	onRetry,
-}: { readonly error: ApiError; readonly onRetry: () => void }): ReactElement {
+}: {
+	readonly error: ApiError;
+	readonly onRetry: () => void;
+}): ReactElement {
 	const handleRetry = useCallback(() => {
 		onRetry();
 	}, [onRetry]);
@@ -129,7 +140,12 @@ function NeedError({
 			<AlertTitle>{errorTitle(error.kind)}</AlertTitle>
 			<AlertDescription className="space-y-3">
 				<p>{errorDescription(error.kind)}</p>
-				<Button variant="secondary" size="sm" onClick={handleRetry} type="button">
+				<Button
+					variant="secondary"
+					size="sm"
+					onClick={handleRetry}
+					type="button"
+				>
 					Réessayer
 				</Button>
 			</AlertDescription>
@@ -141,7 +157,9 @@ function NeedError({
 
 function NeedSuccess({
 	data,
-}: { readonly data: NeedAnalysisOutput }): ReactElement {
+}: {
+	readonly data: NeedAnalysisOutput;
+}): ReactElement {
 	return (
 		<div className="space-y-5">
 			{/* Summary */}
@@ -169,8 +187,8 @@ function NeedSuccess({
 				</CardHeader>
 				<CardContent>
 					<div className="flex flex-wrap gap-2">
-						{data.mustHaveSkills.map((skill, index) => (
-							<Badge key={`must-${index + 1}`} variant="fort">
+						{data.mustHaveSkills.map((skill) => (
+							<Badge key={skill} variant="fort">
 								{skill}
 							</Badge>
 						))}
@@ -189,8 +207,8 @@ function NeedSuccess({
 				<CardContent>
 					{data.niceToHaveSkills.length > 0 ? (
 						<div className="flex flex-wrap gap-2">
-							{data.niceToHaveSkills.map((skill, index) => (
-								<Badge key={`nice-${index + 1}`} variant="moyen">
+							{data.niceToHaveSkills.map((skill) => (
+								<Badge key={skill} variant="moyen">
 									{skill}
 								</Badge>
 							))}
@@ -213,9 +231,9 @@ function NeedSuccess({
 				</CardHeader>
 				<CardContent>
 					<ul className="space-y-2">
-						{data.watchPoints.map((point, index) => (
+						{data.watchPoints.map((point) => (
 							<li
-								key={`watch-${index + 1}`}
+								key={point}
 								className="flex items-start gap-2 text-sm leading-5 text-[var(--text-primary)]"
 							>
 								<span className="mt-0.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--status-warning)]" />

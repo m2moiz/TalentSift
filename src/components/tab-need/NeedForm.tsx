@@ -1,12 +1,24 @@
-import { useCallback, useState, type ChangeEvent, type FormEvent, type ReactElement } from "react";
 import { Sparkles } from "lucide-react";
-
-import type { NeedFormInput } from "../../lib/types";
+import {
+	type ChangeEvent,
+	type FormEvent,
+	type ReactElement,
+	useCallback,
+	useEffect,
+	useState,
+} from "react";
 import { useNeedAnalysis } from "../../hooks/useNeedAnalysis";
 import { useOpHistory } from "../../hooks/useOpHistory";
 import { cn } from "../../lib/cn";
+import type { NeedAnalysisOutput, NeedFormInput } from "../../lib/types";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "../ui/card";
 import { NeedResult } from "./NeedResult";
 
 // ── Input Style ───────────────────────────────────────────────────────────────
@@ -40,7 +52,10 @@ const EMPTY_FORM: NeedFormInput = {
 function FieldLabel({
 	htmlFor,
 	children,
-}: { readonly htmlFor: string; readonly children: string }): ReactElement {
+}: {
+	readonly htmlFor: string;
+	readonly children: string;
+}): ReactElement {
 	return (
 		<label
 			htmlFor={htmlFor}
@@ -53,10 +68,22 @@ function FieldLabel({
 
 // ── NeedsForm ─────────────────────────────────────────────────────────────────
 
-export function NeedForm(): ReactElement {
+export interface NeedFormProps {
+	readonly initialForm?: NeedFormInput;
+	readonly onAnalysisChange?: (data: NeedAnalysisOutput | null) => void;
+}
+
+export function NeedForm({
+	initialForm = EMPTY_FORM,
+	onAnalysisChange,
+}: NeedFormProps): ReactElement {
 	const { data, error, status, analyze, reset } = useNeedAnalysis();
 	const opHistory = useOpHistory();
-	const [form, setForm] = useState<NeedFormInput>(EMPTY_FORM);
+	const [form, setForm] = useState<NeedFormInput>(initialForm);
+
+	useEffect(() => {
+		onAnalysisChange?.(data);
+	}, [data, onAnalysisChange]);
 
 	const handleChange = useCallback(
 		(field: keyof NeedFormInput) =>
@@ -197,9 +224,7 @@ export function NeedForm(): ReactElement {
 
 						{/* Row 3: JD textarea */}
 						<div className="flex flex-col gap-2">
-							<FieldLabel htmlFor="need-jd">
-								Description du poste
-							</FieldLabel>
+							<FieldLabel htmlFor="need-jd">Description du poste</FieldLabel>
 							<textarea
 								id="need-jd"
 								className={cn(inputBase, "min-h-[120px] resize-y")}

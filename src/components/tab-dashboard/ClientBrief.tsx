@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
+import type { ClientBrief } from "../../lib/types";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
-import type { ClientBrief } from "../../lib/types";
 
 // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -46,9 +46,9 @@ function BriefContent({
 					Forces
 				</h4>
 				<ul className="space-y-1">
-					{brief.strengths.map((s, i) => (
+					{brief.strengths.map((s) => (
 						<li
-							key={i}
+							key={s}
 							className="flex items-start gap-2 text-sm text-[var(--text-secondary)]"
 						>
 							<span className="mt-0.5 shrink-0 text-[var(--status-success)]">
@@ -66,9 +66,9 @@ function BriefContent({
 					Points de vigilance
 				</h4>
 				<ul className="space-y-1">
-					{brief.watchPoints.map((w, i) => (
+					{brief.watchPoints.map((w) => (
 						<li
-							key={i}
+							key={w}
 							className="flex items-start gap-2 text-sm text-[var(--text-secondary)]"
 						>
 							<span className="mt-0.5 shrink-0 text-[var(--status-warning)]">
@@ -107,8 +107,8 @@ function BriefContent({
 					<div className="space-y-1 rounded-[8px] bg-[var(--border-subtle)] px-3 py-2">
 						<p className="text-[var(--text-tertiary)]">Compétences clés</p>
 						<div className="flex flex-wrap gap-1">
-							{brief.infosComplementaires.keySkills.map((skill, i) => (
-								<Badge key={i} variant="info">
+							{brief.infosComplementaires.keySkills.map((skill) => (
+								<Badge key={skill} variant="info">
 									{skill}
 								</Badge>
 							))}
@@ -139,7 +139,8 @@ function LoadingState(): ReactElement {
 function EmptyState(): ReactElement {
 	return (
 		<p className="py-8 text-center text-sm text-[var(--text-tertiary)]">
-			Le brief client sera généré après le classement des candidats.
+			La fiche client TDU est générée automatiquement après le classement des
+			candidats.
 		</p>
 	);
 }
