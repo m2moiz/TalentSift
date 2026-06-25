@@ -1,13 +1,16 @@
 import { History } from "lucide-react";
 import type { ReactElement } from "react";
+import type { Locale } from "../../lib/types";
 
 export interface OpHistoryBarProps {
+	readonly locale: Locale;
 	readonly text: string;
 	readonly value: string;
 	readonly onChange: (value: string) => void;
 }
 
 export function OpHistoryBar({
+	locale,
 	text,
 	value,
 	onChange,
@@ -23,12 +26,18 @@ export function OpHistoryBar({
 			</span>
 			<div className="h-4 w-px bg-[var(--border-subtle)]" />
 			<input
-				aria-label="Operation context"
+				aria-label={
+					locale === "en" ? "Operational context" : "Contexte opérationnel"
+				}
 				className="min-w-0 flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none"
 				onChange={(e) => {
 					onChange(e.target.value);
 				}}
-				placeholder="Biais, préférences ou notes sur le manager..."
+				placeholder={
+					locale === "en"
+						? "Biases, preferences, or manager notes..."
+						: "Biais, préférences ou notes sur le manager..."
+				}
 				type="text"
 				value={value}
 			/>

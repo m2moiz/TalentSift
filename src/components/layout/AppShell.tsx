@@ -1,4 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
+import type { Locale } from "../../lib/types";
 import type { OpHistoryBarProps } from "./OpHistoryBar";
 import { OpHistoryBar } from "./OpHistoryBar";
 import type { TabId } from "./TabBar";
@@ -6,6 +7,8 @@ import { TabBar } from "./TabBar";
 
 export interface AppShellProps {
 	readonly activeTab: TabId;
+	readonly locale: Locale;
+	readonly onLocaleChange: (locale: Locale) => void;
 	readonly onTabChange: (tab: TabId) => void;
 	readonly opHistoryProps: OpHistoryBarProps;
 	readonly children: ReactNode;
@@ -13,6 +16,8 @@ export interface AppShellProps {
 
 export function AppShell({
 	activeTab,
+	locale,
+	onLocaleChange,
 	onTabChange,
 	opHistoryProps,
 	children,
@@ -27,8 +32,38 @@ export function AppShell({
 							TDU Recruiter Copilot
 						</p>
 						<h1 className="mt-1 text-xl font-semibold tracking-[-0.02em] md:text-2xl">
-							Recruiter Cockpit
+							{locale === "en" ? "Recruiter Cockpit" : "Recruiter Cockpit"}
 						</h1>
+					</div>
+					<div className="flex items-center gap-2 rounded-[8px] border border-[var(--border-default)] bg-[var(--surface-secondary)] p-1">
+						<button
+							type="button"
+							onClick={() => {
+								onLocaleChange("fr");
+							}}
+							className={[
+								"rounded-[6px] px-3 py-1.5 text-xs font-medium transition-colors",
+								locale === "fr"
+									? "bg-[var(--accent-primary)] text-white"
+									: "text-[var(--text-secondary)] hover:bg-[var(--border-subtle)]",
+							].join(" ")}
+						>
+							FR
+						</button>
+						<button
+							type="button"
+							onClick={() => {
+								onLocaleChange("en");
+							}}
+							className={[
+								"rounded-[6px] px-3 py-1.5 text-xs font-medium transition-colors",
+								locale === "en"
+									? "bg-[var(--accent-primary)] text-white"
+									: "text-[var(--text-secondary)] hover:bg-[var(--border-subtle)]",
+							].join(" ")}
+						>
+							EN
+						</button>
 					</div>
 				</div>
 			</header>
@@ -40,7 +75,11 @@ export function AppShell({
 
 			{/* Tab navigation */}
 			<div className="px-6 pt-4 md:px-10">
-				<TabBar activeTab={activeTab} onTabChange={onTabChange} />
+				<TabBar
+					activeTab={activeTab}
+					locale={locale}
+					onTabChange={onTabChange}
+				/>
 			</div>
 
 			{/* Active content panel */}

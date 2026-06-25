@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { Locale } from "../../lib/types";
 
 export type TabId = "need" | "cvs" | "dashboard";
 
@@ -15,10 +16,37 @@ export const TABS: Tab[] = [
 
 export interface TabBarProps {
 	readonly activeTab: TabId;
+	readonly locale: Locale;
 	readonly onTabChange: (tab: TabId) => void;
 }
 
-export function TabBar({ activeTab, onTabChange }: TabBarProps): ReactElement {
+function labelFor(tabId: TabId, locale: Locale): string {
+	if (locale === "en") {
+		switch (tabId) {
+			case "need":
+				return "Need Analysis";
+			case "cvs":
+				return "CV Matching";
+			case "dashboard":
+				return "Ranking";
+		}
+	}
+
+	switch (tabId) {
+		case "need":
+			return "Analyse du besoin";
+		case "cvs":
+			return "Matching CV";
+		case "dashboard":
+			return "Classement";
+	}
+}
+
+export function TabBar({
+	activeTab,
+	locale,
+	onTabChange,
+}: TabBarProps): ReactElement {
 	return (
 		<nav
 			aria-label="Main navigation"
@@ -46,7 +74,7 @@ export function TabBar({ activeTab, onTabChange }: TabBarProps): ReactElement {
 							}}
 							type="button"
 						>
-							{tab.label}
+							{labelFor(tab.id, locale)}
 						</button>
 					);
 				})}

@@ -9,24 +9,38 @@ import { PitchScript } from "./components/tab-dashboard/PitchScript";
 import { RankingPanel } from "./components/tab-dashboard/RankingPanel";
 import { NeedForm } from "./components/tab-need/NeedForm";
 import { Button } from "./components/ui/button";
-import { DEMO_CV_ENTRIES, DEMO_NEED_FORM } from "./data/demo-preload";
+import { getDemoCvEntries, getDemoNeedForm } from "./data/demo-preload";
 import { useCvMatching } from "./hooks/useCvMatching";
 import { useOpHistory } from "./hooks/useOpHistory";
 import { useRanking } from "./hooks/useRanking";
-import type { NeedAnalysisOutput } from "./lib/types";
+import type { Locale, NeedAnalysisOutput } from "./lib/types";
 
 export function App(): ReactElement {
 	const { text: opHistoryText, setText: setOpHistoryText } = useOpHistory();
+	const [locale, setLocale] = useState<Locale>("fr");
 	const [activeTab, setActiveTab] = useState<TabId>("need");
+	const demoNeedForm = useMemo(() => getDemoNeedForm(locale), [locale]);
+	const demoCvEntries = useMemo(() => getDemoCvEntries(locale), [locale]);
 	const [needAnalysis, setNeedAnalysis] = useState<NeedAnalysisOutput | null>(
 		null,
 	);
 	const cvMatching = useCvMatching(
 		needAnalysis,
 		{ text: opHistoryText },
-		DEMO_CV_ENTRIES,
+		locale,
+		demoCvEntries,
 	);
-	const ranking = useRanking();
+	const ranking = useRanking(locale);
+
+	const handleLocaleChange = useCallback(
+		(nextLocale: Locale) => {
+			setLocale(nextLocale);
+			setNeedAnalysis(null);
+			cvMatching.clearResults();
+			ranking.reset();
+		},
+		[cvMatching, ranking],
+	);
 
 	const dashboardStatus = ranking.status.kind;
 	const dashboardError =
@@ -83,15 +97,22 @@ export function App(): ReactElement {
 
 	const dashboardIntro = useMemo(() => {
 		if (needAnalysis === null) {
-			return "Analysez d'abord le besoin pour débloquer le classement final.";
+			return locale === "en"
+				? "Analyze the hiring need first to unlock the final ranking."
+				: "Analysez d'abord le besoin pour débloquer le classement final.";
 		}
 		if (cvMatching.result === null) {
-			return "Lancez ensuite le matching CV pour préparer le brief client et le pitch recruteur.";
+			return locale === "en"
+				? "Then run CV matching to prepare the client brief and recruiter pitch."
+				: "Lancez ensuite le matching CV pour préparer le brief client et le pitch recruteur.";
 		}
-		return "Générez le classement final pour produire le brief client TDU et le pitch de mission.";
-	}, [cvMatching.result, needAnalysis]);
+		return locale === "en"
+			? "Generate the final ranking to produce the TDU client brief and mission pitch."
+			: "Générez le classement final pour produire le brief client TDU et le pitch de mission.";
+	}, [cvMatching.result, locale, needAnalysis]);
 
 	const rankingPanelProps = {
+		locale,
 		output: ranking.output,
 		status: dashboardStatus,
 		...(dashboardError === undefined ? {} : { errorMessage: dashboardError }),
@@ -100,12 +121,14 @@ export function App(): ReactElement {
 
 	const clientBriefProps = {
 		brief: ranking.output?.clientBrief ?? null,
+		locale,
 		status: dashboardStatus,
 		...(dashboardError === undefined ? {} : { errorMessage: dashboardError }),
 		...(ranking.output === null ? {} : { onCopy: handleCopyBrief }),
 	};
 
 	const pitchScriptProps = {
+		locale,
 		text: ranking.output?.pitchScript ?? null,
 		status: dashboardStatus,
 		...(dashboardError === undefined ? {} : { errorMessage: dashboardError }),
@@ -115,16 +138,20 @@ export function App(): ReactElement {
 	return (
 		<AppShell
 			activeTab={activeTab}
+			locale={locale}
+			onLocaleChange={handleLocaleChange}
 			onTabChange={setActiveTab}
 			opHistoryProps={{
-				text: "Contexte opérationnel",
+				locale,
+				text: locale === "en" ? "Operational context" : "Contexte opérationnel",
 				value: opHistoryText,
 				onChange: setOpHistoryText,
 			}}
 		>
 			{activeTab === "need" && (
 				<NeedForm
-					initialForm={DEMO_NEED_FORM}
+					initialForm={demoNeedForm}
+					locale={locale}
 					onAnalysisChange={handleNeedAnalysisChange}
 				/>
 			)}
@@ -143,13 +170,14 @@ export function App(): ReactElement {
 						ranking.reset();
 					}}
 					hasAnalysis={needAnalysis !== null}
+					locale={locale}
 				/>
 			)}
 			{activeTab === "dashboard" && (
 				<section className="space-y-6">
 					<div className="space-y-3">
 						<h2 className="text-lg font-semibold tracking-[-0.02em]">
-							Classement final
+							{locale === "en" ? "Final ranking" : "Classement final"}
 						</h2>
 						<p className="max-w-prose text-sm leading-6 text-[var(--text-secondary)]">
 							{dashboardIntro}
@@ -160,12 +188,16 @@ export function App(): ReactElement {
 								disabled={!canGenerateDashboard}
 							>
 								{dashboardStatus === "loading"
-									? "Génération en cours..."
-									: "Générer le classement final"}
+									? locale === "en"
+										? "Generating..."
+										: "Génération en cours..."
+									: locale === "en"
+										? "Generate final ranking"
+										: "Générer le classement final"}
 							</Button>
 							{ranking.output !== null && (
 								<Button variant="ghost" size="sm" onClick={ranking.reset}>
-									Réinitialiser
+									{locale === "en" ? "Reset" : "Réinitialiser"}
 								</Button>
 							)}
 						</div>
@@ -174,8 +206,8 @@ export function App(): ReactElement {
 					<div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
 						<RankingPanel {...rankingPanelProps} />
 						<div className="space-y-6">
-							<ClientBriefCard {...clientBriefProps} />
-							<PitchScript {...pitchScriptProps} />
+							<ClientBriefCard {...clientBriefProps} locale={locale} />
+							<PitchScript {...pitchScriptProps} locale={locale} />
 						</div>
 					</div>
 				</section>
