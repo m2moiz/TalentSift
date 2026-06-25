@@ -17,6 +17,13 @@ export const Recommendation = {
 export type Recommendation =
 	(typeof Recommendation)[keyof typeof Recommendation];
 
+export const Locale = {
+	French: "fr",
+	English: "en",
+} as const;
+
+export type Locale = (typeof Locale)[keyof typeof Locale];
+
 // ── Operational History ──────────────────────────────────────────────────────
 
 export interface OperationHistory {

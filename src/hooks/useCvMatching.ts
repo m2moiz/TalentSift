@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { callApiForJson } from "../lib/api";
 import { buildMatchCvsPrompt } from "../lib/prompts";
 import type {
@@ -6,6 +6,7 @@ import type {
 	CandidateMatch,
 	CvEntry,
 	CvMatchOutput,
+	Locale,
 	NeedAnalysisOutput,
 	OperationHistory,
 } from "../lib/types";
@@ -48,7 +49,10 @@ const DEFAULT_ENTRIES: readonly [CvEntry, CvEntry, CvEntry] = [
 // ── Mock response builder ─────────────────────────────────────────────────────
 // Used when VITE_MOCK_MODE=1 so the demo works without an API key.
 
-function buildMockMatchingJson(candidateNames: readonly string[]): string {
+function buildMockMatchingJson(
+	candidateNames: readonly string[],
+	locale: Locale,
+): string {
 	const names =
 		(candidateNames[0]?.trim().length ?? 0) > 0
 			? candidateNames
@@ -56,6 +60,29 @@ function buildMockMatchingJson(candidateNames: readonly string[]): string {
 
 	const candidates = names.map((name, i) => {
 		if (i === 0) {
+			if (locale === "en") {
+				return {
+					name,
+					matchScore: "Fort",
+					numericScore: 88,
+					recommendation: "Call First",
+					strengths: [
+						"8+ years of Java/Kafka experience in banking environments",
+						"Designed production event-driven architectures",
+						"Strong Kubernetes and cloud deployment experience",
+					],
+					watchPoints: [
+						"Availability still needs confirmation (3-month notice period ongoing)",
+						"Expected day rate may be above budget",
+					],
+					callQuestions: [
+						"How do you handle scaling on Kafka pipelines?",
+						"What is your experience migrating monoliths to microservices?",
+					],
+					opHistoryAlignment:
+						"Very close to previous Kafka hires that worked well for this client",
+				};
+			}
 			return {
 				name,
 				matchScore: "Fort",
@@ -79,6 +106,27 @@ function buildMockMatchingJson(candidateNames: readonly string[]): string {
 			};
 		}
 		if (i === 1) {
+			if (locale === "en") {
+				return {
+					name,
+					matchScore: "Faible",
+					numericScore: 22,
+					recommendation: "Reject",
+					strengths: [
+						"Strong project management and client communication",
+						"Solid product experience in e-commerce",
+					],
+					watchPoints: [
+						"No hands-on Java/Kafka engineering experience",
+						"Functional profile, not a production technical profile",
+					],
+					callQuestions: [
+						"This role requires deep technical ownership — how would you bridge that gap?",
+					],
+					opHistoryAlignment:
+						"Operational history shows the manager prefers hands-on technical profiles — this candidate does not fit",
+				};
+			}
 			return {
 				name,
 				matchScore: "Faible",
@@ -99,6 +147,30 @@ function buildMockMatchingJson(candidateNames: readonly string[]): string {
 					"L'historique montre que le manager privilégie les profils techniques opérationnels — ce candidat ne correspond pas",
 			};
 		}
+		if (locale === "en") {
+			return {
+				name,
+				matchScore: "Moyen",
+				numericScore: 62,
+				recommendation: "Backup",
+				strengths: [
+					"Strong data and big data architecture background",
+					"Cloud solution design experience (AWS)",
+					"Good stakeholder communication skills",
+				],
+				watchPoints: [
+					"Limited hands-on Java delivery experience (more architecture-oriented)",
+					"No deep production Kafka background",
+				],
+				callQuestions: [
+					"What is your hands-on Java delivery experience versus architecture work?",
+					"Have you worked on real-time data pipelines in production?",
+				],
+				opHistoryAlignment:
+					"Interesting hybrid profile but not the immediate best fit for a hands-on Kafka developer need",
+			};
+		}
+
 		return {
 			name,
 			matchScore: "Moyen",
@@ -130,6 +202,7 @@ function buildMockMatchingJson(candidateNames: readonly string[]): string {
 export function useCvMatching(
 	needAnalysis: NeedAnalysisOutput | null,
 	opHistory: OperationHistory,
+	locale: Locale,
 	initialEntries: readonly [CvEntry, CvEntry, CvEntry] = DEFAULT_ENTRIES,
 ): CvMatchingState & CvMatchingActions {
 	const [cvEntries, setCvEntries] =
@@ -137,6 +210,12 @@ export function useCvMatching(
 	const [result, setResult] = useState<CvMatchOutput | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<ApiError | null>(null);
+
+	useEffect(() => {
+		setCvEntries(initialEntries);
+		setResult(null);
+		setError(null);
+	}, [initialEntries]);
 
 	const setCvEntry = useCallback((index: number, entry: CvEntry): void => {
 		setCvEntries((prev) => {
@@ -158,7 +237,9 @@ export function useCvMatching(
 			setError({
 				kind: ApiErrorKind.MissingKey,
 				message:
-					"Analysez d'abord le besoin (Tab 1) avant de lancer le matching CV.",
+					locale === "en"
+						? "Analyze the hiring need first before running CV matching."
+						: "Analysez d'abord le besoin (Tab 1) avant de lancer le matching CV.",
 			});
 			return;
 		}
@@ -168,7 +249,9 @@ export function useCvMatching(
 			setError({
 				kind: ApiErrorKind.MissingKey,
 				message:
-					"Collez au moins un CV dans les zones de texte avant de lancer le matching.",
+					locale === "en"
+						? "Paste at least one CV before running the matching step."
+						: "Collez au moins un CV dans les zones de texte avant de lancer le matching.",
 			});
 			return;
 		}
@@ -182,9 +265,13 @@ export function useCvMatching(
 				needAnalysis,
 				opHistory,
 				cvEntries.map((e) => e.cvText),
+				locale,
 			);
 
-			const mockResponse = buildMockMatchingJson(cvEntries.map((e) => e.name));
+			const mockResponse = buildMockMatchingJson(
+				cvEntries.map((e) => e.name),
+				locale,
+			);
 
 			const output = await callApiForJson<CvMatchOutput>(prompt, mockResponse);
 
@@ -199,12 +286,14 @@ export function useCvMatching(
 				kind: apiErr.kind ?? ApiErrorKind.NetworkError,
 				message:
 					apiErr.message ??
-					"Une erreur inattendue est survenue lors du matching.",
+					(locale === "en"
+						? "An unexpected error occurred while matching CVs."
+						: "Une erreur inattendue est survenue lors du matching."),
 			});
 		} finally {
 			setIsLoading(false);
 		}
-	}, [needAnalysis, opHistory, cvEntries]);
+	}, [cvEntries, locale, needAnalysis, opHistory]);
 
 	return {
 		cvEntries,

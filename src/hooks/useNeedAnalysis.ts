@@ -3,6 +3,7 @@ import { callApiForJson } from "../lib/api";
 import { buildAnalyzeNeedPrompt } from "../lib/prompts";
 import type {
 	ApiError,
+	Locale,
 	NeedAnalysisOutput,
 	NeedFormInput,
 	OperationHistory,
@@ -28,7 +29,7 @@ export interface UseNeedAnalysisReturn {
 
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
-const MOCK_RESPONSE: NeedAnalysisOutput = {
+const MOCK_RESPONSE_FR: NeedAnalysisOutput = {
 	summary:
 		"Nous recherchons un Développeur Senior Java/Kafka pour un client bancaire. Le besoin porte sur la conception et la maintenance de pipelines de données temps réel. Le candidat devra maîtriser l'écosystème Kafka (Kafka Streams, Connect, Schema Registry) ainsi que Java 17+. L'environnement est international et en contexte Agile.",
 	mustHaveSkills: [
@@ -56,9 +57,39 @@ const MOCK_RESPONSE: NeedAnalysisOutput = {
 		"Le manager privilégie les profils ayant déjà travaillé en contexte bancaire et valorise les candidats issus du conseil. Anticiper une vérification approfondie du niveau Kafka.",
 };
 
-const MOCK_RESPONSE_JSON = JSON.stringify(MOCK_RESPONSE);
+const MOCK_RESPONSE_EN: NeedAnalysisOutput = {
+	summary:
+		"We are looking for a Senior Java/Kafka Developer for a banking client. The mission focuses on designing and maintaining real-time data pipelines. The candidate must be strong with the Kafka ecosystem (Kafka Streams, Connect, Schema Registry) as well as Java 17+. The environment is international and Agile.",
+	mustHaveSkills: [
+		"Java 17+ (minimum 5 years of experience)",
+		"Apache Kafka (Kafka Streams, Kafka Connect, Schema Registry)",
+		"Event-driven architecture design",
+		"Maven/Gradle and unit/integration testing",
+		"Professional English",
+	],
+	niceToHaveSkills: [
+		"Banking or finance domain experience",
+		"Kubernetes / Docker knowledge",
+		"Avro and Protobuf",
+		"Spring Boot / Spring Cloud",
+	],
+	watchPoints: [
+		"The stated day rate (550-650€) is in the upper range — verify real seniority carefully",
+		"Start date is September 1st — immediately available profiles may be limited",
+		"International context: validate distributed-team collaboration ability",
+		"The operational manager is demanding on code quality — expect a deeper technical screening",
+	],
+	idealProfile:
+		"A senior developer (7-10 years of experience) with at least 3 years of hands-on Kafka production work. Ideally from a large company or consulting background, with some exposure to financial services. Strong balance between deep technical skill and business communication.",
+	opHistoryImpact:
+		"The manager prefers candidates who have already worked in banking environments and values consulting backgrounds. Expect closer validation of real Kafka depth.",
+};
 
-export function useNeedAnalysis(): UseNeedAnalysisReturn {
+function mockResponseJson(locale: Locale): string {
+	return JSON.stringify(locale === "en" ? MOCK_RESPONSE_EN : MOCK_RESPONSE_FR);
+}
+
+export function useNeedAnalysis(locale: Locale): UseNeedAnalysisReturn {
 	const [data, setData] = useState<NeedAnalysisOutput | null>(null);
 	const [error, setError] = useState<ApiError | null>(null);
 	const [status, setStatus] = useState<NeedAnalysisStatus>("idle");
@@ -70,10 +101,10 @@ export function useNeedAnalysis(): UseNeedAnalysisReturn {
 			setData(null);
 
 			try {
-				const prompt = buildAnalyzeNeedPrompt(form, opHistory);
+				const prompt = buildAnalyzeNeedPrompt(form, opHistory, locale);
 				const result = await callApiForJson<NeedAnalysisOutput>(
 					prompt,
-					MOCK_RESPONSE_JSON,
+					mockResponseJson(locale),
 				);
 				setData(result);
 				setStatus("success");
@@ -95,7 +126,7 @@ export function useNeedAnalysis(): UseNeedAnalysisReturn {
 				setStatus("error");
 			}
 		},
-		[],
+		[locale],
 	);
 
 	const reset = useCallback(() => {
